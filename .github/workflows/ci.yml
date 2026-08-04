@@ -1,0 +1,71 @@
+# Copyright (c) the go-webengine/browserproxy authors.
+# SPDX-License-Identifier: BSD-3-Clause
+#
+# Pure-Go CI: everything builds and tests with CGO_ENABLED=0 (no C toolchain).
+# The `test` job builds, vets and tests natively (with -short, so the live
+# example.com integration test is skipped) and enforces a 100% coverage floor on
+# the root package's pure logic (protocol codec, SSRF guard, session state,
+# scroll slicing, WS dispatch). The `cross-build` job cross-compiles the whole
+# module for all six of Go's 64-bit targets to keep the service portable.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CGO_ENABLED: "0"
+  GO_VERSION: "1.26.4"
+
+jobs:
+  test:
+    name: build · vet · test · coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          check-latest: true
+
+      - name: Build (CGO_ENABLED=0)
+        run: go build ./...
+
+      - name: Vet
+        run: go vet ./...
+
+      # -short skips the live-network TestIntegration_ExampleCom; every unit
+      # test (SSRF guard, protocol codec, session, WS dispatch/loop) still runs.
+      - name: Test
+        run: go test -short ./...
+
+      - name: Coverage gate (100% on the root package)
+        run: bash scripts/coverage-gate.sh
+
+  cross-build:
+    name: cross-build ${{ matrix.goarch }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        goarch: [amd64, arm64, riscv64, loong64, ppc64le, s390x]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          check-latest: true
+
+      - name: Build for linux/${{ matrix.goarch }}
+        env:
+          GOOS: linux
+          GOARCH: ${{ matrix.goarch }}
+        run: go build ./...
