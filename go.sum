@@ -8,8 +8,8 @@ github.com/go-opentype/fonts v0.4.2 h1:jnMo+tSsbGBzp+kjX+oegMtO/+iCTfX5eYT9SRSYU
 github.com/go-opentype/fonts v0.4.2/go.mod h1:C6yQL2apHItfEZ5hztpsHF0S5mlX/hklLlq/Z5fRG/g=
 github.com/go-opentype/opentype v0.5.0 h1:++VoqgbXgYACyTTNzUAivoxW9M3m2gxWMAn6bIY7DXg=
 github.com/go-opentype/opentype v0.5.0/go.mod h1:AOixevJf7XQaH7+WG+OMIOZEbYPXfMqklVk26Y6YTUU=
-github.com/go-webengine/engine v0.0.0-20260804150249-954647130231 h1:WD7qZbA8OjcLBYTbT3cM9V0fmtfnHCVm5tRm9hHuqV4=
-github.com/go-webengine/engine v0.0.0-20260804150249-954647130231/go.mod h1:uS0mymFpy9qAP6pz1AdrjQtXfw85NIEKDVS+0sq9Tac=
+github.com/go-webengine/engine v0.0.0-20260804155851-abdee3b40c6a h1:+c2kgN2U98e4J3659jyrWlR6d2LB/4nbsPD/v9Yhyj0=
+github.com/go-webengine/engine v0.0.0-20260804155851-abdee3b40c6a/go.mod h1:uS0mymFpy9qAP6pz1AdrjQtXfw85NIEKDVS+0sq9Tac=
 github.com/go-widgets/painter v0.2.0 h1:C7anwlKLYnlTeCK90xKYvy0srxYXqhuvyDFismlf2Sc=
 github.com/go-widgets/painter v0.2.0/go.mod h1:ccmlkH2UmcXQh6rt9Fu2eDt2RI0B5V0POaGmUKeW0EQ=
 github.com/gorilla/websocket v1.5.3 h1:saDtZ6Pbx/0u+bgYQ3q96pZgCzfhKXGPqt7kZ72aNNg=
