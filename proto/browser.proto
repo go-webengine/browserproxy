@@ -1,0 +1,99 @@
+// Copyright (c) the go-webengine/browserproxy authors.
+// SPDX-License-Identifier: BSD-3-Clause
+
+syntax = "proto3";
+
+package browserproxy.v1;
+
+option go_package = "github.com/go-webengine/browserproxy/browserpb";
+
+// Browser is the remote-browser service. A single long-lived bidirectional
+// stream models one browser tab: the client sends input events, the server
+// streams back rendered frames and chrome state. This maps the browser's
+// natural full-duplex interaction directly onto gRPC streaming — the transport
+// underneath is grpc-transports/websocket, so the same client compiles to
+// GOOS=js/wasm and runs in the browser with no sidecar proxy.
+service Browser {
+  // Session drives one tab for the lifetime of the stream.
+  rpc Session(stream ClientMsg) returns (stream ServerMsg);
+}
+
+// ClientMsg is one input event from the client. Exactly one field is set.
+message ClientMsg {
+  oneof msg {
+    Navigate navigate = 1;
+    Click click = 2;
+    Scroll scroll = 3;
+    Key key = 4;
+    Resize resize = 5;
+    Back back = 6;
+    Forward forward = 7;
+  }
+}
+
+// Navigate loads a new URL as a fresh history entry.
+message Navigate {
+  string url = 1;
+}
+
+// Click reports a content-area click in viewport pixel coordinates.
+message Click {
+  int32 x = 1;
+  int32 y = 2;
+}
+
+// Scroll adjusts the vertical scroll by dy pixels (positive = down).
+message Scroll {
+  int32 dy = 1;
+}
+
+// Key reports a key press by name (e.g. "Enter", "ArrowDown").
+message Key {
+  string key = 1;
+}
+
+// Resize sets a new content-area viewport size in pixels.
+message Resize {
+  int32 w = 1;
+  int32 h = 2;
+}
+
+// Back re-loads the most recent back-history entry.
+message Back {}
+
+// Forward re-loads the next forward-history entry.
+message Forward {}
+
+// ServerMsg is one message streamed to the client. Exactly one field is set.
+message ServerMsg {
+  oneof msg {
+    Frame frame = 1;
+    State state = 2;
+    Error error = 3;
+  }
+}
+
+// Frame is a rendered viewport slice: raw PNG bytes (no base64 — gRPC carries
+// binary natively) taken from the full page at vertical scroll offset_y.
+message Frame {
+  bytes png = 1;
+  int32 w = 2;
+  int32 h = 3;
+  int32 offset_y = 4;
+}
+
+// State is the browser-chrome model: what the address bar and the
+// back/forward buttons should show.
+message State {
+  string url = 1;
+  string title = 2;
+  bool loading = 3;
+  bool can_back = 4;
+  bool can_forward = 5;
+}
+
+// Error reports a navigation or protocol failure the client should surface
+// (e.g. an SSRF-blocked URL or an unreachable host).
+message Error {
+  string message = 1;
+}

@@ -1,10 +1,12 @@
 // Copyright (c) the go-webengine/browserproxy authors.
 // SPDX-License-Identifier: BSD-3-Clause
 
-// Command browserproxy serves the go-webengine remote-browser WebSocket
-// endpoint: it renders web pages server-side with the pure-Go engine and
-// streams frames to a client (e.g. the wasmdesk clients/browser front-end),
-// forwarding the client's input back as navigation.
+// Command browserproxy serves the go-webengine remote-browser endpoint: it
+// renders web pages server-side with the pure-Go engine and streams frames to a
+// client (e.g. the wasmdesk clients/browser front-end), forwarding the client's
+// input back as navigation. The wire protocol is gRPC over WebSocket
+// (grpc-transports/websocket), so the same client compiles to GOOS=js/wasm and
+// runs in the browser with no sidecar proxy.
 package main
 
 import (
@@ -50,9 +52,10 @@ func run(args []string, stderr io.Writer) int {
 		RenderTimeout:        *renderTimeout,
 	}
 	srv := browserproxy.NewServer(cfg)
+	wsHandler, stopGRPC := srv.HandlerListener(browserproxy.DefaultPath)
 
 	mux := http.NewServeMux()
-	mux.Handle("/ws", srv)
+	mux.Handle(browserproxy.DefaultPath, wsHandler)
 	mux.HandleFunc("/healthz", func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		_, _ = io.WriteString(w, "ok")
@@ -69,10 +72,11 @@ func run(args []string, stderr io.Writer) int {
 
 	errCh := make(chan error, 1)
 	go func() { errCh <- httpSrv.ListenAndServe() }()
-	fmt.Fprintf(stderr, "browserproxy: listening on %s (ws path /ws)\n", *addr)
+	fmt.Fprintf(stderr, "browserproxy: listening on %s (gRPC/WebSocket path %s)\n", *addr, browserproxy.DefaultPath)
 
 	select {
 	case err := <-errCh:
+		stopGRPC()
 		if err != nil && err != http.ErrServerClosed {
 			fmt.Fprintf(stderr, "browserproxy: server error: %v\n", err)
 			return 1
@@ -80,6 +84,7 @@ func run(args []string, stderr io.Writer) int {
 		return 0
 	case <-ctx.Done():
 		fmt.Fprintln(stderr, "browserproxy: shutting down")
+		stopGRPC()
 		shutCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 		if err := httpSrv.Shutdown(shutCtx); err != nil {

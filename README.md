@@ -11,9 +11,16 @@
 
 A pure-Go, **`CGO_ENABLED=0`** **remote-browser** service. It renders web pages
 server-side with the pure-Go [`go-webengine/engine`](https://github.com/go-webengine/engine)
-and streams frames (plus a hyperlink hit-map) to a thin client over a simple
-JSON **WebSocket** protocol, forwarding the client's clicks, scrolls and keys
-back as navigation. **No Chromium, no cgo, no host web view.**
+and streams frames (plus a hyperlink hit-map) to a thin client, forwarding the
+client's clicks, scrolls and keys back as navigation. **No Chromium, no cgo, no
+host web view.**
+
+The wire protocol is **gRPC** carried over
+[`grpc-transports/websocket`](https://github.com/grpc-transports/websocket): a
+single bidirectional `Session` stream per tab. Because that transport ships a
+zero-dependency `syscall/js` client, **the same client compiles to
+`GOOS=js/GOARCH=wasm` and runs in the browser with no sidecar proxy** — the full
+gRPC feature set (client- and bidi-streaming), which plain grpc-web cannot do.
 
 Because rendering happens on the server:
 
@@ -24,16 +31,27 @@ Because rendering happens on the server:
   `SharedArrayBuffer`) — a WebSocket is exempt from COEP/CORS.
 
 It is the server half of the [wasmdesk](https://github.com/wasmdesk)
-`clients/browser` in-desktop browser.
+`clients/browser` in-desktop browser. See [`wasmclient/`](wasmclient/) for a
+worked GOOS=js/wasm client.
 
 ## Run it locally
 
 ```console
 $ go run ./cmd/browserproxy -addr :8090
-browserproxy: listening on :8090 (ws path /ws)
+browserproxy: listening on :8090 (gRPC/WebSocket path /ws)
 ```
 
-Then point a client at `ws://localhost:8090/ws`. Flags:
+Then dial the `browserproxy.v1.Browser` gRPC service over the WebSocket
+transport at `ws://localhost:8090/ws` (native or GOOS=js/wasm):
+
+```go
+opt, _ := wstransport.DialOption("ws://localhost:8090/ws", wstransport.ClientConfig{})
+cc, _ := grpc.NewClient("passthrough:///browserproxy",
+    grpc.WithTransportCredentials(insecure.NewCredentials()), opt)
+stream, _ := browserpb.NewBrowserClient(cc).Session(ctx)
+```
+
+Flags:
 
 | flag | default | meaning |
 |------|---------|---------|
@@ -46,11 +64,11 @@ Then point a client at `ws://localhost:8090/ws`. Flags:
 
 ## Protocol
 
-Line-oriented JSON over one WebSocket per tab; frames are base64-PNG inside the
-JSON. Client → server: `navigate`, `click`, `scroll`, `key`, `resize`, `back`,
-`forward`. Server → client: `frame` (`w`,`h`,`offsetY`), `state`
-(`url`,`title`,`loading`,`canBack`,`canForward`), `error`. Full spec:
-[`docs/protocol.md`](docs/protocol.md).
+One gRPC bidirectional `Session` stream per tab (`proto/browser.proto`). Client →
+server `ClientMsg`: `navigate`, `click`, `scroll`, `key`, `resize`, `back`,
+`forward`. Server → client `ServerMsg`: `frame` (`png`,`w`,`h`,`offset_y` — raw
+PNG bytes, no base64), `state` (`url`,`title`,`loading`,`can_back`,
+`can_forward`), `error`. Full spec: [`docs/protocol.md`](docs/protocol.md).
 
 ## Security (SSRF guard)
 
@@ -74,9 +92,16 @@ $ go test -short ./...     # unit tests only (no network); root package at 100%
 $ go test ./...            # also runs the live example.com integration test
 ```
 
-The live `TestIntegration_ExampleCom` drives a real WebSocket client against a
-real server, navigates to `https://example.com`, and asserts it receives a
-non-blank frame and a `state` carrying the page title.
+Three layers of end-to-end proof, all over the real gRPC-over-WebSocket wire:
+
+* `TestIntegration_StubbedTransport` — a real gRPC client drives a stub-rendered
+  server (hermetic, no network);
+* `TestWasmClientE2E` — compiles [`wasmclient/`](wasmclient/) to `js/wasm` and
+  runs it under Node against a live server, asserting a full bidirectional
+  Session — proof a pure-Go browser client actually runs;
+* `TestIntegration_ExampleCom` (non-`-short`) — the same client and transport
+  drive a real engine-backed server against `https://example.com`, asserting a
+  non-blank frame and the page title.
 
 ## License
 

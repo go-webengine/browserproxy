@@ -12,6 +12,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/go-webengine/browserproxy/browserpb"
 	"github.com/go-webengine/engine"
 )
 
@@ -297,12 +298,11 @@ func (s *Session) Viewport() (w, h int) {
 }
 
 // StateMsg returns the chrome model for the current page.
-func (s *Session) StateMsg() State {
+func (s *Session) StateMsg() *browserpb.State {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	return State{
-		Kind:       KindState,
-		URL:        s.url,
+	return &browserpb.State{
+		Url:        s.url,
 		Title:      s.title,
 		Loading:    false,
 		CanBack:    len(s.back) > 0,
