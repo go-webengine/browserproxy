@@ -4,11 +4,14 @@ go 1.26.4
 
 require (
 	github.com/go-webengine/engine v0.0.0-20260804155851-abdee3b40c6a
-	github.com/gorilla/websocket v1.5.3
+	github.com/grpc-transports/websocket v0.0.0-20260807130344-e208e98ee231
+	google.golang.org/grpc v1.83.0
+	google.golang.org/protobuf v1.36.11
 )
 
 require (
 	github.com/andybalholm/brotli v1.0.6 // indirect
+	github.com/coder/websocket v1.8.15 // indirect
 	github.com/go-browserhttp/browserhttp v0.1.0 // indirect
 	github.com/go-images/images v0.0.0-20260702213524-ea366b42f216 // indirect
 	github.com/go-opentype/fonts v0.4.2 // indirect
@@ -20,4 +23,5 @@ require (
 	golang.org/x/net v0.57.0 // indirect
 	golang.org/x/sys v0.47.0 // indirect
 	golang.org/x/text v0.40.0 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
 )

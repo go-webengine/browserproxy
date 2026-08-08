@@ -1,4 +1,4 @@
-# browserproxy WebSocket protocol
+# browserproxy protocol
 
 `browserproxy` is a **remote browser**: it renders web pages server-side with
 the pure-Go [`go-webengine/engine`](https://github.com/go-webengine/engine) and
@@ -11,83 +11,89 @@ happens on the server, **any** site can be shown — including pages that set
 
 ## Transport
 
-One **WebSocket** connection per browser tab. The server endpoint is `/ws`.
-Every message in **both** directions is a single JSON object sent as a
-WebSocket **text** frame (one JSON object per message). Frames (rendered
-images) are PNG bytes **base64-encoded into the JSON**, so the client needs only
-one JSON parse per message and never a second binary channel.
+The wire protocol is the **gRPC** service `browserproxy.v1.Browser`
+(`proto/browser.proto`), carried over
+[`grpc-transports/websocket`](https://github.com/grpc-transports/websocket) — a
+gRPC transport that tunnels the HTTP/2 framing over a single **WebSocket** per
+tab. The server endpoint is `/ws`.
+
+```proto
+service Browser {
+  rpc Session(stream ClientMsg) returns (stream ServerMsg);
+}
+```
+
+One long-lived **bidirectional stream** models one browser tab: the client sends
+`ClientMsg` input events, the server streams back `ServerMsg` frames and state.
+The transport matters: because `grpc-transports/websocket` ships a
+zero-dependency `syscall/js` client, the **same** Go client compiles to
+`GOOS=js/GOARCH=wasm` and runs in the browser with the full gRPC feature set
+(client- and bidi-streaming) — something plain grpc-web, which needs a sidecar
+and cannot client-stream, does not provide. See [`../wasmclient`](../wasmclient)
+for a worked browser client.
 
 On connect the server immediately sends one `state` message with empty fields
 (no page loaded yet) so the client can paint its chrome.
 
+Frames (rendered images) travel as **raw PNG `bytes`** inside the protobuf
+message — gRPC carries binary natively, so there is no base64 expansion.
+
 ## Coordinate model
 
 The server renders the **full page** at the current viewport **width** (height
-grows to fit). It keeps a scroll offset `offsetY` and streams only the
+grows to fit). It keeps a scroll offset `offset_y` and streams only the
 **viewport-height slice** at that offset. All client input coordinates are in
 **content-area viewport pixels** (0,0 = top-left of the streamed slice); the
-server adds `offsetY` to map them onto the full page.
+server adds `offset_y` to map them onto the full page.
 
-## Client → server
+## Client → server: `ClientMsg`
 
-| kind       | fields        | meaning |
-|------------|---------------|---------|
-| `navigate` | `url`         | Load `url` as a new history entry. |
-| `click`    | `x`, `y`      | A click at content-area pixel `(x,y)`. If it lands inside a link's hit rect the server navigates to the link. |
-| `scroll`   | `dy`          | Scroll by `dy` pixels (positive = down). Re-slices the cached page **without** re-rendering. |
-| `key`      | `key`         | A key name. Arrow/Page/Home/End scroll the page; other keys are ignored server-side. |
-| `resize`   | `w`, `h`      | The content area is now `w×h`. Re-renders the current page at the new width. |
-| `back`     | —             | Navigate back in history. |
-| `forward`  | —             | Navigate forward in history. |
+`ClientMsg` is a `oneof` — exactly one of:
 
-Example:
+| case       | fields   | meaning |
+|------------|----------|---------|
+| `navigate` | `url`    | Load `url` as a new history entry. |
+| `click`    | `x`, `y` | A click at content-area pixel `(x,y)`. If it lands inside a link's hit rect the server navigates to the link. |
+| `scroll`   | `dy`     | Scroll by `dy` pixels (positive = down). Re-slices the cached page **without** re-rendering. |
+| `key`      | `key`    | A key name. Arrow/Page/Home/End scroll the page; other keys are ignored server-side. |
+| `resize`   | `w`, `h` | The content area is now `w×h`. Re-renders the current page at the new width. |
+| `back`     | —        | Navigate back in history. |
+| `forward`  | —        | Navigate forward in history. |
 
-```json
-{"kind":"navigate","url":"https://example.com"}
-{"kind":"click","x":210,"y":148}
-{"kind":"scroll","dy":240}
-{"kind":"resize","w":1024,"h":720}
-```
+An empty or unrecognised `ClientMsg` yields an `error` (followed, as always, by
+the current frame and state).
 
-## Server → client
+## Server → client: `ServerMsg`
 
-After every handled client message the server replies with a `frame` **and** a
-`state` (in that order). A failure prepends an `error`.
+`ServerMsg` is a `oneof` of `frame`, `state`, `error`. After every handled
+client message the server sends a `frame` **and** a `state` (in that order); a
+failure prepends an `error`.
 
-### `frame`
+### `Frame`
 
-```json
-{"kind":"frame","frame":"<base64 PNG>","w":1024,"h":768,"offsetY":240}
-```
-
-* `frame` — base64-encoded PNG of the viewport slice.
+* `png` — raw PNG bytes of the viewport slice.
 * `w`, `h` — slice size in pixels (equals the viewport). The client blits this
   into its content-area canvas.
-* `offsetY` — the scroll offset of this slice within the full page.
+* `offset_y` — the scroll offset of this slice within the full page.
 
 The slice is always exactly `w×h`; where the page is shorter than the viewport
 (or before any page loads) the uncovered area is white, so the client canvas is
 always fully painted.
 
-### `state`
+### `State`
 
-```json
-{"kind":"state","url":"https://example.com/","title":"Example Domain",
- "loading":false,"canBack":true,"canForward":false}
-```
+* `url` — drives the address bar.
+* `title` — the tab title.
+* `loading` — whether a render is in flight.
+* `can_back`, `can_forward` — enabled state of the history buttons.
 
-Drives the address bar (`url`), the tab title (`title`) and the enabled state of
-the back/forward buttons (`canBack`/`canForward`).
+### `Error`
 
-### `error`
+* `message` — e.g. `browserproxy: request blocked by SSRF guard: private address 10.0.0.1`.
 
-```json
-{"kind":"error","message":"browserproxy: request blocked by SSRF guard: private address 10.0.0.1"}
-```
-
-Reported for a blocked/unreachable navigation or a malformed client message.
-The client should surface it (e.g. in the address bar or a banner) and keep the
-last good frame.
+Reported for a blocked/unreachable navigation or an empty/unknown client
+message. The client should surface it (e.g. in the address bar or a banner) and
+keep the last good frame.
 
 ## Security
 
@@ -104,6 +110,6 @@ is checked by the SSRF guard:
 * internal namespaces (`localhost`, `*.internal`, `*.local`, `*.lan`,
   `*.home.arpa`) are blocked by name.
 
-The server also enforces a **per-session navigation rate limit** and a
-**global concurrent-render cap**, and a configurable **WebSocket Origin
-allowlist**.
+The server also enforces a **per-session navigation rate limit**, a **global
+concurrent-render cap**, and a configurable **WebSocket Origin allowlist**
+(`AllowedOrigins`; empty or `*` allows any origin).

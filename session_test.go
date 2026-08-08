@@ -37,7 +37,7 @@ func TestSession_NavigateAndState(t *testing.T) {
 		t.Fatal(err)
 	}
 	st := s.StateMsg()
-	if st.URL != "http://a.example/" || st.Title != "title:http://a.example/" {
+	if st.Url != "http://a.example/" || st.Title != "title:http://a.example/" {
 		t.Errorf("state = %+v", st)
 	}
 	if st.CanBack || st.CanForward {
@@ -67,13 +67,13 @@ func TestSession_BackForward(t *testing.T) {
 	if err := s.Back(ctx); err != nil {
 		t.Fatal(err)
 	}
-	if st := s.StateMsg(); st.URL != "http://one.example/" || !st.CanForward || st.CanBack {
+	if st := s.StateMsg(); st.Url != "http://one.example/" || !st.CanForward || st.CanBack {
 		t.Errorf("after back: %+v", st)
 	}
 	if err := s.Forward(ctx); err != nil {
 		t.Fatal(err)
 	}
-	if st := s.StateMsg(); st.URL != "http://two.example/" || !st.CanBack || st.CanForward {
+	if st := s.StateMsg(); st.Url != "http://two.example/" || !st.CanBack || st.CanForward {
 		t.Errorf("after forward: %+v", st)
 	}
 	// Back/Forward with an empty stack report ErrNoHistory.
@@ -122,7 +122,7 @@ func TestSession_Click(t *testing.T) {
 	if nav, err := s.Click(ctx, 15, 5); err != nil || !nav {
 		t.Fatalf("click hit: nav=%v err=%v", nav, err)
 	}
-	if st := s.StateMsg(); st.URL != "http://dst.example/" || !st.CanBack {
+	if st := s.StateMsg(); st.Url != "http://dst.example/" || !st.CanBack {
 		t.Errorf("after click-nav: %+v", st)
 	}
 }
@@ -326,7 +326,7 @@ func TestSession_BackRenderError(t *testing.T) {
 	if err := s.Back(ctx); err == nil {
 		t.Fatal("want Back render error")
 	}
-	if s.StateMsg().URL != "http://two/" { // failed Back left state unchanged
+	if s.StateMsg().Url != "http://two/" { // failed Back left state unchanged
 		t.Errorf("Back error mutated state: %+v", s.StateMsg())
 	}
 }

@@ -4,9 +4,11 @@
 # Pure-Go CI: everything builds and tests with CGO_ENABLED=0 (no C toolchain).
 # The `test` job builds, vets and tests natively (with -short, so the live
 # example.com integration test is skipped) and enforces a 100% coverage floor on
-# the root package's pure logic (protocol codec, SSRF guard, session state,
-# scroll slicing, WS dispatch). The `cross-build` job cross-compiles the whole
-# module for all six of Go's 64-bit targets to keep the service portable.
+# the root package's pure logic (SSRF guard, session state, scroll slicing, gRPC
+# dispatch/stream loop). The `cross-build` job cross-compiles the whole module
+# for all six of Go's 64-bit targets. The `wasm` job compiles the js/wasm
+# browserproxy client and runs it under Node against a live server — the proof
+# that the gRPC-over-WebSocket transport gives a pure-Go browser client.
 name: CI
 
 on:
@@ -69,3 +71,30 @@ jobs:
           GOOS: linux
           GOARCH: ${{ matrix.goarch }}
         run: go build ./...
+
+  wasm:
+    name: wasm client (js/wasm + node)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          check-latest: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22" # global WebSocket + arraybuffer messages
+
+      # The whole browserproxy client stack must compile to the browser target.
+      - name: Compile-check js/wasm client
+        env:
+          GOOS: js
+          GOARCH: wasm
+        run: go build -o /dev/null ./wasmclient
+
+      # Build the real client to wasm, run it under Node against a live
+      # (stub-rendered) server, and assert a full bidirectional Session.
+      - name: Wasm end-to-end
+        run: go test -run TestWasmClientE2E -v .
