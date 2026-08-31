@@ -30,7 +30,7 @@ jobs:
     name: build · vet · test · coverage
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: actions/setup-go@v5
         with:
@@ -59,7 +59,7 @@ jobs:
       matrix:
         goarch: [amd64, arm64, riscv64, loong64, ppc64le, s390x]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: actions/setup-go@v5
         with:
@@ -76,7 +76,7 @@ jobs:
     name: wasm client (js/wasm + node)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: actions/setup-go@v5
         with:
