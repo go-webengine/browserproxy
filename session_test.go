@@ -361,7 +361,7 @@ func TestEngineRender_ClosureOffline(t *testing.T) {
 
 func TestGuardedClient_CopiesJarAndTimeout(t *testing.T) {
 	eng := engine.New()
-	c := guardedClient(eng.Client)
+	c := GuardedClient(eng.Client)
 	if c.Jar == nil {
 		t.Error("guarded client dropped the cookie jar")
 	}
@@ -369,7 +369,7 @@ func TestGuardedClient_CopiesJarAndTimeout(t *testing.T) {
 		t.Errorf("timeout = %v, want %v", c.Timeout, eng.Client.Timeout)
 	}
 	// A nil base must not panic and yields a usable client.
-	if guardedClient(nil) == nil {
-		t.Error("guardedClient(nil) returned nil")
+	if GuardedClient(nil) == nil {
+		t.Error("GuardedClient(nil) returned nil")
 	}
 }

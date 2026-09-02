@@ -73,7 +73,7 @@ const defaultMaxHistory = 100
 // subresource are guarded at dial time).
 func NewSession(w, h int, opts Options) *Session {
 	eng := engine.New()
-	eng.Client = guardedClient(eng.Client)
+	eng.Client = GuardedClient(eng.Client)
 	return newSession(w, h, engineRender(eng), opts)
 }
 
@@ -107,13 +107,20 @@ func engineRender(eng *engine.Engine) RenderFunc {
 	}
 }
 
-// guardedClient returns a copy of base whose transport dials through the SSRF
+// GuardedClient returns a copy of base whose transport dials through the SSRF
 // guard (CheckAddr as the dialer Control). It keeps the browser User-Agent set
 // by the engine but replaces the transport so that navigation, subresources,
 // redirects and DNS-rebinding all pass the dial-time IP check. The Chrome-TLS
-// fingerprint of browserhttp is traded for airtight SSRF containment, which the
-// proxy treats as mandatory.
-func guardedClient(base *http.Client) *http.Client {
+// fingerprint of browserhttp is traded for airtight SSRF containment, which
+// this package treats as mandatory for any content it fetches on a caller's
+// behalf.
+//
+// Exported so a host that drives an *engine.LiveDocument directly — instead
+// of going through Session's remote-browsing/history/rate-limiting model —
+// still gets this package's dial-time protection: `eng := engine.New();
+// eng.Client = browserproxy.GuardedClient(eng.Client)`. NewSession uses
+// exactly this to build its own engine.
+func GuardedClient(base *http.Client) *http.Client {
 	c := &http.Client{
 		Transport: &http.Transport{
 			DialContext:         guardedDialer().DialContext,
