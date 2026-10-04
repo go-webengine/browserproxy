@@ -1,36 +1,46 @@
 module github.com/go-webengine/browserproxy
 
-go 1.26.4
+go 1.27.1
 
 require (
-	github.com/go-webengine/engine v0.3.11
+	github.com/go-webengine/engine v0.5.0
 	github.com/grpc-transports/websocket v0.2.0
 	google.golang.org/grpc v1.84.0
 	google.golang.org/protobuf v1.36.12
 )
 
 require (
-	github.com/andybalholm/brotli v1.0.6 // indirect
+	github.com/ajroetker/go-highway v0.0.4 // indirect
+	github.com/andybalholm/brotli v1.2.5 // indirect
 	github.com/breml/rootcerts v0.3.7 // indirect
 	github.com/coder/websocket v1.8.15 // indirect
 	github.com/dlclark/regexp2/v2 v2.5.2 // indirect
-	github.com/dop251/goja v0.0.0-20260723142020-b4aef50fa347 // indirect
+	github.com/dop251/goja v0.0.0-20260926152631-39ec2650adc9 // indirect
 	github.com/evanw/esbuild v0.28.2 // indirect
 	github.com/go-browserhttp/browserhttp v0.2.0 // indirect
-	github.com/go-images/images v0.0.0-20260702213524-ea366b42f216 // indirect
-	github.com/go-opentype/fonts v0.5.0 // indirect
-	github.com/go-opentype/opentype v0.5.0 // indirect
-	github.com/go-sourcemap/sourcemap v2.1.3+incompatible // indirect
-	github.com/go-widgets/painter v0.2.0 // indirect
-	github.com/google/pprof v0.0.0-20230207041349-798e818bf904 // indirect
-	github.com/klauspost/compress v1.17.4 // indirect
+	github.com/go-gfx/gfx v0.34.0 // indirect
+	github.com/go-images/gif v0.1.0 // indirect
+	github.com/go-images/images v0.0.0-20260927173152-87444e36aac4 // indirect
+	github.com/go-images/jpeg v0.2.0 // indirect
+	github.com/go-images/jpeg2000 v0.1.0 // indirect
+	github.com/go-images/png v0.1.0 // indirect
+	github.com/go-opentype/fonts v0.10.0 // indirect
+	github.com/go-opentype/opentype v0.13.1-0.20260927180318-ae6327b14eac // indirect
+	github.com/go-sourcemap/sourcemap v2.1.4+incompatible // indirect
+	github.com/go-webengine/esbuildsandbox v0.1.0 // indirect
+	github.com/go-widgets/painter v0.13.0 // indirect
+	github.com/google/pprof v0.0.0-20240727154555-813a5fbdbec8 // indirect
+	github.com/klauspost/compress v1.18.7 // indirect
 	github.com/refraction-networking/utls v1.8.2 // indirect
+	github.com/sergeymakinen/go-bmp v1.0.0 // indirect
+	github.com/sergeymakinen/go-ico v1.0.0 // indirect
 	github.com/srwiley/oksvg v0.0.0-20221011165216-be6e8873101c // indirect
 	github.com/srwiley/rasterx v0.0.0-20220730225603-2ab79fcdd4ef // indirect
-	golang.org/x/crypto v0.55.0 // indirect
-	golang.org/x/image v0.0.0-20211028202545-6944b10bf410 // indirect
-	golang.org/x/net v0.58.0 // indirect
-	golang.org/x/sys v0.47.0 // indirect
-	golang.org/x/text v0.41.0 // indirect
+	github.com/tannevaled/gobig2 v0.2.0 // indirect
+	golang.org/x/crypto v0.57.0 // indirect
+	golang.org/x/image v0.46.0 // indirect
+	golang.org/x/net v0.59.0 // indirect
+	golang.org/x/sys v0.48.0 // indirect
+	golang.org/x/text v0.42.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260706201446-f0a921348800 // indirect
 )
