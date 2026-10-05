@@ -4,8 +4,8 @@ go 1.27.1
 
 require (
 	github.com/go-webengine/engine v0.5.0
-	github.com/grpc-transports/websocket v0.2.0
-	google.golang.org/grpc v1.85.0-dev.0.20260825072537-93e31b48545e
+	github.com/grpc-transports/websocket v0.4.0
+	google.golang.org/grpc v1.86.0-dev
 	google.golang.org/protobuf v1.36.12
 )
 
