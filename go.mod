@@ -3,7 +3,7 @@ module github.com/go-webengine/browserproxy
 go 1.27.1
 
 require (
-	github.com/go-webengine/engine v0.5.1
+	github.com/go-webengine/engine v0.5.3
 	github.com/grpc-transports/websocket v0.4.0
 	google.golang.org/grpc v1.86.0-dev
 	google.golang.org/protobuf v1.36.12
