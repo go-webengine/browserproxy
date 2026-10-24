@@ -36,8 +36,8 @@ github.com/go-opentype/opentype v0.15.0 h1:ioE3eCbNZavlk/w073J3uX5FKjqhgOHQw+wZZ
 github.com/go-opentype/opentype v0.15.0/go.mod h1:ZB31jTJl2mhPESXYMuUW+p36UrOabw/2+6mtyh/vNnI=
 github.com/go-sourcemap/sourcemap v2.1.4+incompatible h1:a+iTbH5auLKxaNwQFg0B+TCYl6lbukKPc7b5x0n1s6Q=
 github.com/go-sourcemap/sourcemap v2.1.4+incompatible/go.mod h1:F8jJfvm2KbVjc5NqelyYJmf/v5J0dwNLS2mL4sNA1Jg=
-github.com/go-webengine/engine v0.10.1 h1:krbPgI9IykzWrRausddkmishcAvShzqjYzEO1XP35n8=
-github.com/go-webengine/engine v0.10.1/go.mod h1:lScQZWSM7MinTu6rsND5XWcsWz3z+yakEYNUI57YXpU=
+github.com/go-webengine/engine v0.13.2 h1:QytR0rdjNBd+chCBTVJCZHOxa0Qt1KNFZrNlFw8Q5l0=
+github.com/go-webengine/engine v0.13.2/go.mod h1:I3eaAYFi5D8jo9IS8qViyCz2qg8RUTUuXQ3VCvPuSR0=
 github.com/go-webengine/esbuildsandbox v0.1.0 h1:1LdmX+0/yJarQlxZgJ7JIMu+Qy6P7Yzu4NFcX9+jFl8=
 github.com/go-webengine/esbuildsandbox v0.1.0/go.mod h1:za8oj1vbDfVkTpHLeRk7JfEQjmJfj+GHNq4R47681vQ=
 github.com/go-widgets/painter v0.16.0 h1:j8FFObisySQChY2JiXS7Di2Mo4cqufIc0PDUnoDPMiA=
