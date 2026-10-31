@@ -3,11 +3,12 @@
 # go-webengine / browserproxy
 
 [![CI](https://github.com/go-webengine/browserproxy/actions/workflows/ci.yml/badge.svg)](https://github.com/go-webengine/browserproxy/actions/workflows/ci.yml)
+[![vuln](https://github.com/go-webengine/browserproxy/actions/workflows/vuln.yml/badge.svg)](https://github.com/go-webengine/browserproxy/actions/workflows/vuln.yml)
 ![coverage](https://img.shields.io/badge/coverage-100%25%20(root)-brightgreen)
 [![Go Reference](https://pkg.go.dev/badge/github.com/go-webengine/browserproxy.svg)](https://pkg.go.dev/github.com/go-webengine/browserproxy)
 [![Docs](https://img.shields.io/badge/docs-mkdocs--material-0079A8)](https://go-webengine.github.io/docs/)
 [![License: BSD-3-Clause](https://img.shields.io/badge/License-BSD--3--Clause-blue.svg)](LICENSE)
-[![Go 1.27.1+](https://img.shields.io/badge/Go-1.27.1%2B-00ADD8?logo=go)](https://go.dev/dl/)
+[![Go 1.27.3+](https://img.shields.io/badge/Go-1.27.3%2B-00ADD8?logo=go)](https://go.dev/dl/)
 
 A pure-Go, **`CGO_ENABLED=0`** **remote-browser** service. It renders web pages
 server-side with the pure-Go [`go-webengine/engine`](https://github.com/go-webengine/engine)

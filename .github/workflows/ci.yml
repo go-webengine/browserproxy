@@ -23,7 +23,12 @@ permissions:
 
 env:
   CGO_ENABLED: "0"
-  GO_VERSION: "1.27.2"
+  # ⛔ KEEP THIS EQUAL TO go.mod's `go` DIRECTIVE. It is the toolchain the
+  # artefacts are built with, and the standard library is judged by it: on
+  # 2026-10-31 this said 1.27.2 while GO-2026-6809 (crypto/x509
+  # Certificate.Verify) was reachable from cmd/browserproxy, fixed in go1.27.3.
+  # Raising go.mod alone would leave the lane building the vulnerable one.
+  GO_VERSION: "1.27.3"
 
 jobs:
   test:
