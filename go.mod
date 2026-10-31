@@ -3,7 +3,7 @@ module github.com/go-webengine/browserproxy
 go 1.27.2
 
 require (
-	github.com/go-webengine/engine v0.18.1
+	github.com/go-webengine/engine v0.19.1
 	github.com/grpc-transports/websocket v0.4.0
 	google.golang.org/grpc v1.86.0-dev
 	google.golang.org/protobuf v1.36.12
@@ -37,6 +37,7 @@ require (
 	github.com/sergeymakinen/go-ico v1.0.0 // indirect
 	github.com/srwiley/rasterx v0.0.0-20220730225603-2ab79fcdd4ef // indirect
 	github.com/tannevaled/gobig2 v0.2.0 // indirect
+	github.com/tetratelabs/wazero v1.12.0 // indirect
 	golang.org/x/crypto v0.58.0 // indirect
 	golang.org/x/image v0.47.0 // indirect
 	golang.org/x/net v0.61.0 // indirect
