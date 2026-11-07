@@ -90,4 +90,10 @@ jobs:
           BIN="$(go env GOPATH)/bin"
           "$BIN/govulncheck" -format json ./... > /tmp/vuln.json || true
           test -s /tmp/vuln.json || { echo "::error::govulncheck wrote nothing at all"; exit 1; }
-          "$BIN/vulngate" -go "$(go env GOVERSION)" /tmp/vuln.json
+          # ⛔ TWO DASHES, and this is a deprecation that would have rotted in
+          # silence. vulngate moved to cobra, which does not accept a single
+          # dash for a long flag; `-go` still works through a shim that says so
+          # on every run -- "this shim will not outlive the next major" -- and a
+          # warning in a green lane is a warning nobody reads. Measured
+          # 2026-11-07 against vulngate@latest: `--go` is accepted and silent.
+          "$BIN/vulngate" --go "$(go env GOVERSION)" /tmp/vuln.json
