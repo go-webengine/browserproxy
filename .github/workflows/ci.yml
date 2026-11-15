@@ -23,12 +23,24 @@ permissions:
 
 env:
   CGO_ENABLED: "0"
-  # ⛔ KEEP THIS EQUAL TO go.mod's `go` DIRECTIVE. It is the toolchain the
-  # artefacts are built with, and the standard library is judged by it: on
-  # 2026-10-31 this said 1.27.2 while GO-2026-6809 (crypto/x509
-  # Certificate.Verify) was reachable from cmd/browserproxy, fixed in go1.27.3.
-  # Raising go.mod alone would leave the lane building the vulnerable one.
-  GO_VERSION: "1.27.3"
+  # ⛔ GO_VERSION IS GONE, AND THE COMMENT IT CARRIED IS WHY. It said:
+  #
+  #   KEEP THIS EQUAL TO go.mod's `go` DIRECTIVE. [...] Raising go.mod alone
+  #   would leave the lane building the vulnerable one.
+  #
+  # That was right, and it was a rule with nothing to enforce it. On 2026-11-15
+  # the directive moved to 1.27.4 for GO-2026-6859 while this still said
+  # "1.27.3" — the note's own warning, two weeks later. `setup-go` sets
+  # GOTOOLCHAIN=local, so the lane does not build the older toolchain quietly:
+  # it REFUSES with `go.mod requires go >= 1.27.4`. Measured the same day on
+  # five of six go-filesystems repositories, every job red at once.
+  #
+  # So each step now reads `go-version-file: go.mod` instead. The equality the
+  # comment asked for is structural rather than requested, and the next raise
+  # needs no edit here. ⚠ An expression like `${{ env.GO_VERSION }}` also hid
+  # this from `gofloor`, which classifies a hard-coded pin as a finding but an
+  # expression as merely "expression" — a literal one indirection away was
+  # invisible to the auditor written to find exactly this.
 
 jobs:
   test:
@@ -39,7 +51,7 @@ jobs:
 
       - uses: actions/setup-go@v7
         with:
-          go-version: ${{ env.GO_VERSION }}
+          go-version-file: go.mod
           check-latest: true
 
       - name: Build (CGO_ENABLED=0)
@@ -68,7 +80,7 @@ jobs:
 
       - uses: actions/setup-go@v7
         with:
-          go-version: ${{ env.GO_VERSION }}
+          go-version-file: go.mod
           check-latest: true
 
       - name: Build for linux/${{ matrix.goarch }}
@@ -85,7 +97,7 @@ jobs:
 
       - uses: actions/setup-go@v7
         with:
-          go-version: ${{ env.GO_VERSION }}
+          go-version-file: go.mod
           check-latest: true
 
       - uses: actions/setup-node@v7
