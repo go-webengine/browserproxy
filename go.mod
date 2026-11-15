@@ -1,6 +1,30 @@
 module github.com/go-webengine/browserproxy
 
-go 1.27.3
+// ⛔ THE PATCH, AND THIS REPOSITORY IS ONE OF THE NINE THE FLEET SWEEPS FOR
+// EXPOSURE: it is the browser proxy, network in, untrusted HTML parsed. This
+// line is the only one of the three Go pins a CONSUMER honours — `go install`
+// with GOTOOLCHAIN=local obeys it, while the CI pin merely builds our artefacts
+// and the toolchain stamped in a binary describes one executable.
+//
+// Raised to 1.27.4 on 2026-11-15 for GO-2026-6859 — published 2026-11-11,
+// CVE-2026-97054, "HTTP/1 server crash due to MaxBytesReader header race in
+// net/http", stdlib, fixed in 1.26.11 and 1.27.4. Read at
+// https://vuln.go.dev/ID/GO-2026-6859.json rather than quoted from notes.
+//
+// ⛔ AND THIS ONE IS A PROXY: it SERVES HTTP as well as fetching it, so an
+// advisory about an HTTP/1 server is this program's own class rather than a
+// contract detail. (Whether its handlers reach the racing path is a
+// REACHABILITY question, which govulncheck answers and this line does not.)
+//
+// Measured, not assumed: `modfloor --floor 1.27.4` read the directive this
+// module PUBLISHED at v0.2.1 as `go 1.27.3`. Eight of the nine network-facing
+// modules read BELOW; only go-webengine/engine was already at 1.27.4. This is
+// the second-to-last of the eight.
+//
+// Previous raise, kept because the record is the point: 1.27.2 -> 1.27.3 on
+// 2026-10-31 for GO-2026-6809 (crypto/x509 Certificate.Verify), which was
+// REACHABLE from cmd/browserproxy — not merely required.
+go 1.27.4
 
 require (
 	github.com/go-webengine/engine v0.18.1
