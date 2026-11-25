@@ -6,10 +6,10 @@ github.com/breml/rootcerts v0.3.7 h1:KZZkmd591bmq//te85L0u33zgtI3phyGlfD8u7/pzUg
 github.com/breml/rootcerts v0.3.7/go.mod h1:S/PKh+4d1HUn4HQovEB8hPJZO6pUZYrIhmXBhsegfXw=
 github.com/coder/websocket v1.8.15 h1:6B2JPeOGlpff2Uz6vOEH1Vzpi0iUz20A+lPVhPHtNUA=
 github.com/coder/websocket v1.8.15/go.mod h1:NX3SzP+inril6yawo5CQXx8+fk145lPDC6pumgx0mVg=
-github.com/dlclark/regexp2/v2 v2.5.2 h1:HAsucWRhsqcDzl6Ua9aR8JwYOTzrZyPrF0/FNxJVAI0=
-github.com/dlclark/regexp2/v2 v2.5.2/go.mod h1:avUrQvPaLz2DrFNHJF0taWAFFX2C1GMSSoeiqFjcBmU=
-github.com/dop251/goja v0.0.0-20260926152631-39ec2650adc9 h1:Ksd3Vil12b/ykT5NjGzd3qNc688cJB9OUXJZZChEktI=
-github.com/dop251/goja v0.0.0-20260926152631-39ec2650adc9/go.mod h1:u8yZRUavu+N4EnFFy6J5fVtjE7lEcZ2YyV2GcBXY9c8=
+github.com/dlclark/regexp2/v2 v2.11.0 h1:z5uRPHav+eTVpoffDSuUP2KPS4f1ONZaPDK73S8HA0w=
+github.com/dlclark/regexp2/v2 v2.11.0/go.mod h1:avUrQvPaLz2DrFNHJF0taWAFFX2C1GMSSoeiqFjcBmU=
+github.com/dop251/goja v0.0.0-20261121162556-79d6ad37b976 h1:OuX7CZEaTVzYknG+YkXAUwflEQrQflFpndifpyPbjjs=
+github.com/dop251/goja v0.0.0-20261121162556-79d6ad37b976/go.mod h1:L1yoLBco9M3b2Gdh1UZHg+BIePeAdV1bwknaLLxAgoc=
 github.com/dsnet/compress v0.0.2-0.20230904184137-39efe44ab707 h1:2tV76y6Q9BB+NEBasnqvs7e49aEBFI8ejC89PSnWH+4=
 github.com/dsnet/compress v0.0.2-0.20230904184137-39efe44ab707/go.mod h1:qssHWj60/X5sZFNxpG4HBPDHVqxNm4DfnCKgrbZOT+s=
 github.com/dsnet/golib v0.0.0-20171103203638-1ea166775780/go.mod h1:Lj+Z9rebOhdfkVLjJ8T6VcRQv3SXugXy999NBtR9aFY=
@@ -35,8 +35,8 @@ github.com/go-images/jpeg2000 v0.14.0 h1:/nH3l5r95E7OkNZCfq7gmoDQvJzVAhmSw6rd2If
 github.com/go-images/jpeg2000 v0.14.0/go.mod h1:4/Pp3Jp2es5lA8/Ema8F7dFwl0vZprCj9MyznIz9Gdc=
 github.com/go-images/png v0.2.0 h1:RFPkHPuRYRvrDJol/Mmn9P1DSaLV8VPmEQ8BkZoCpL0=
 github.com/go-images/png v0.2.0/go.mod h1:g1qayDmWLClHo9R5KQ+RrcUNTBcaA4c1thaIfEoS3vg=
-github.com/go-macos/metal v0.7.0 h1:c/ymPqCzoLcDxcZ3i6cNSgOScsOlIz4yVbik5asVp+w=
-github.com/go-macos/metal v0.7.0/go.mod h1:BiclSGJgONDekug12CQtlINic9zMmXF7m/iA7bQn4hM=
+github.com/go-macos/metal v0.8.0 h1:BWv+rlHEwvbBwFtHuZzLvnjoqb14hvIftmHMhWP4MOA=
+github.com/go-macos/metal v0.8.0/go.mod h1:BiclSGJgONDekug12CQtlINic9zMmXF7m/iA7bQn4hM=
 github.com/go-macos/objc v0.12.0 h1:/WmB4C1CQd5RkqBRvnHNljEFtOTvytPA9fkD87xuJVQ=
 github.com/go-macos/objc v0.12.0/go.mod h1:ao+SmTFBrkZdP+488hFTrSFvCtJ36McKKhNNOlcFXrQ=
 github.com/go-opentype/fonts v0.14.0 h1:WHw7k9gkHT1pu9B2yyvd0FWyQqn/4NKFQoKhvMYt3Mo=
@@ -47,8 +47,8 @@ github.com/go-simd/highway v0.0.14 h1:O3HPG00qgLGlrQyYBlMGyLYsuzZrqHA4+XNptPjV5g
 github.com/go-simd/highway v0.0.14/go.mod h1:t5XBPxqa10Lnj0frQS7Ur0JaN+/CckEmm5HXrqBDxXA=
 github.com/go-sourcemap/sourcemap v2.1.4+incompatible h1:a+iTbH5auLKxaNwQFg0B+TCYl6lbukKPc7b5x0n1s6Q=
 github.com/go-sourcemap/sourcemap v2.1.4+incompatible/go.mod h1:F8jJfvm2KbVjc5NqelyYJmf/v5J0dwNLS2mL4sNA1Jg=
-github.com/go-webengine/engine v0.48.0 h1:kohKEaAcm8oFVeMuZ3Y/TNEEmoeT3IeIH4RdmPLxHh0=
-github.com/go-webengine/engine v0.48.0/go.mod h1:qZ+vk/n6UUsQVM5oIon6jwQEth9o/NrsXdKETjkZlIA=
+github.com/go-webengine/engine v0.49.0 h1:2CpkvZUzxLOi9BWY/TE3cVL2KlVoaHRYERtyKq4P8qI=
+github.com/go-webengine/engine v0.49.0/go.mod h1:nqxTBq475Ym1uKEPx1nry0iLc0Di/tSkuxNIZqI5hlY=
 github.com/go-webengine/esbuildsandbox v0.1.0 h1:1LdmX+0/yJarQlxZgJ7JIMu+Qy6P7Yzu4NFcX9+jFl8=
 github.com/go-webengine/esbuildsandbox v0.1.0/go.mod h1:za8oj1vbDfVkTpHLeRk7JfEQjmJfj+GHNq4R47681vQ=
 github.com/go-widgets/painter v0.16.0 h1:j8FFObisySQChY2JiXS7Di2Mo4cqufIc0PDUnoDPMiA=
